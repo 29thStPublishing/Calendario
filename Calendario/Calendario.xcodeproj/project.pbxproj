@@ -16,6 +16,8 @@
 		96379DC415CAD313009E95E3 /* CalVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96379DC315CAD313009E95E3 /* CalVC.m */; };
 		96379DD015CAD37F009E95E3 /* OuterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 96379DCE15CAD37F009E95E3 /* OuterViewController.m */; };
 		96379DD115CAD37F009E95E3 /* OuterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 96379DCF15CAD37F009E95E3 /* OuterViewController.xib */; };
+		96379DD815CAEE19009E95E3 /* prev.png in Resources */ = {isa = PBXBuildFile; fileRef = 96379DD715CAEE19009E95E3 /* prev.png */; };
+		96379DDA15CAEE20009E95E3 /* next.png in Resources */ = {isa = PBXBuildFile; fileRef = 96379DD915CAEE20009E95E3 /* next.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +36,8 @@
 		96379DCE15CAD37F009E95E3 /* OuterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OuterViewController.m; sourceTree = "<group>"; };
 		96379DCF15CAD37F009E95E3 /* OuterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OuterViewController.xib; sourceTree = "<group>"; };
 		96379DD215CAD89F009E95E3 /* CalVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalVC.h; sourceTree = "<group>"; };
+		96379DD715CAEE19009E95E3 /* prev.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = prev.png; path = ../prev.png; sourceTree = "<group>"; };
+		96379DD915CAEE20009E95E3 /* next.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = next.png; path = ../next.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +91,8 @@
 				96379DCF15CAD37F009E95E3 /* OuterViewController.xib */,
 				96379DD215CAD89F009E95E3 /* CalVC.h */,
 				96379DC315CAD313009E95E3 /* CalVC.m */,
+				96379DD915CAEE20009E95E3 /* next.png */,
+				96379DD715CAEE19009E95E3 /* prev.png */,
 				96379DB715CAD313009E95E3 /* Supporting Files */,
 			);
 			path = Calendario;
@@ -156,6 +162,8 @@
 			files = (
 				96379DBB15CAD313009E95E3 /* InfoPlist.strings in Resources */,
 				96379DD115CAD37F009E95E3 /* OuterViewController.xib in Resources */,
+				96379DD815CAEE19009E95E3 /* prev.png in Resources */,
+				96379DDA15CAEE20009E95E3 /* next.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,6 +11,8 @@
 @interface CalVC : UIViewController {
     
     NSDate * activeDate;
+    NSMutableArray * dateMap;
+    
 }
 
 
@@ -26,5 +28,15 @@
 -(void)prevMonth:(id)sender;
 -(void)clearSubviews;
 
++(int)monthForDate:(NSDate*)date;
++(int)yearForDate:(NSDate*)date;
+
+
++(NSString*)readableWeekdayForDate:(NSDate*)date;
++(int)weekdayForDate:(NSDate*)date;
++(NSString*)stringForDayOfWeek:(int)dayOfWeek;
++(int)numDaysInMonth:(NSDate*)date;
++(NSDate*)getFirstDayOfMonth:(NSDate*)date;
+-(void)updateDateMap:(NSDate*)firstDay;
 
 @end
