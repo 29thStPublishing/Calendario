@@ -196,14 +196,11 @@
     borderview = nil;
     
     
-    for (int i = 0; i < DAYS_IN_WEEK; i++) {
-        
-        
+    for (int i = 0; i < DAYS_IN_WEEK; i++) {        
         UILabel * dayHeader = [[UILabel alloc] initWithFrame:CGRectMake(starting_x,
                                                                       starting_y,
                                                                       col_width,
                                                                       row_height)];
-        
         
         
         dayHeader.text = [CalVC stringForDayOfWeek:i];
@@ -211,10 +208,10 @@
         [dayHeader setBackgroundColor:[UIColor clearColor]];
         starting_x += col_width;
         
-
-        
         [self.view addSubview:dayHeader];
     }
+    
+    
     
     
     // draw to the next row.
@@ -222,8 +219,9 @@
     starting_x = 0;
     
     int first_weekday = [CalVC weekdayForDate:firstDayOfMonth];
-
     int num_days_in_month = [CalVC numDaysInMonth:firstDayOfMonth];
+    
+    
     int active_date = 1;
     
     NSLog(@"First weekday = %d\n", first_weekday);
@@ -249,7 +247,13 @@
                 
                 dateString.textAlignment = UITextAlignmentCenter;
                 [dateString setFont:[UIFont fontWithName:@"Futura" size:12.0]];
-                [dateString setBackgroundColor:[UIColor clearColor]];
+                
+                if ([CalVC dateIsNotToday:firstDayOfMonth active_date:active_date]) {
+                    [dateString setBackgroundColor:[UIColor grayColor]];
+                }
+                else {
+                    [dateString setBackgroundColor:[UIColor clearColor]];
+                }
                 dateString.text = [NSString stringWithFormat:@"%d", active_date];
                 
                 dateString.userInteractionEnabled = NO;
@@ -376,6 +380,19 @@
     return [dateString intValue];
 }
 
++(int)dayForDate:(NSDate*)date {
+    NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@ "dd"];        
+    
+    NSString * dateString = [formatter stringFromDate:date];
+    
+    
+    formatter = nil;
+    
+    
+    return [dateString intValue];
+}
+
 +(NSString*)readableWeekdayForDate:(NSDate*)date {
     
     NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
@@ -441,6 +458,35 @@
 {
     return YES;
 }
+
++(BOOL)dateIsNotToday:(NSDate*)firstDayOfMonth active_date:(int)active_date {
+    NSDate * today = [[NSDate alloc] init];
+    
+
+    
+    
+    if (([CalVC monthForDate:today] != [CalVC monthForDate:firstDayOfMonth]) ||
+        ([CalVC yearForDate:today] != [CalVC yearForDate:firstDayOfMonth])) {
+        return NO;
+    }
+    
+    NSCalendar * cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    
+    NSDateComponents * dateComponents = [[NSDateComponents alloc] init];
+    [dateComponents setDay:(active_date - 1)];
+    
+
+    NSDate * actualDate = [cal dateByAddingComponents:dateComponents toDate:firstDayOfMonth options:0];
+    
+    dateComponents = nil;
+    
+    if ([CalVC dayForDate:actualDate] == [CalVC dayForDate:today]) {
+        return YES;
+    }
+    
+    return NO;
+}
+
 
                                                  
 @end

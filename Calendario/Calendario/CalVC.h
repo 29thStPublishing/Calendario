@@ -38,5 +38,7 @@
 +(int)numDaysInMonth:(NSDate*)date;
 +(NSDate*)getFirstDayOfMonth:(NSDate*)date;
 -(void)updateDateMap:(NSDate*)firstDay;
++(int)dayForDate:(NSDate*)date;
++(BOOL)dateIsNotToday:(NSDate*)firstDayOfMonth active_date:(int)active_date;
 
 @end
