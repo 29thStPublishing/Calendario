@@ -32,7 +32,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    calendar = [[CalVC alloc] init];
+    calendar = [[CalVC alloc] init:[[NSDate alloc] init]];
     
     [calendar setFrame:calendarView.frame];
     

@@ -16,11 +16,13 @@
 
 @implementation CalVC
 
--(id)init {    
+-(id)init:(NSDate*)startingDate {
     self = [super init];
     
     if (self) {
         dateMap = nil;
+        activeDate = [startingDate copy];
+        chosenDate = [startingDate copy];
     }
        
     
@@ -159,6 +161,11 @@
 
 -(void)clickDay:(id)sender {
     NSLog(@"Day = %d (%@)\n", [sender tag], [CalVC readableWeekdayForDate:[dateMap objectAtIndex:([sender tag] - 1)]]);
+    
+    chosenDate = [dateMap objectAtIndex:([sender tag] - 1)];
+    
+    [self drawCalendarView];
+    
 }
 
 -(void) drawDateGrid {
@@ -205,6 +212,7 @@
         
         dayHeader.text = [CalVC stringForDayOfWeek:i];
         dayHeader.textAlignment = UITextAlignmentCenter;
+        
         [dayHeader setBackgroundColor:[UIColor clearColor]];
         starting_x += col_width;
         
@@ -224,7 +232,6 @@
     
     int active_date = 1;
     
-    NSLog(@"First weekday = %d\n", first_weekday);
     for (int i = 1; i < NUM_ROWS; i++) {
         int j = 1;
         
@@ -248,12 +255,19 @@
                 dateString.textAlignment = UITextAlignmentCenter;
                 [dateString setFont:[UIFont fontWithName:@"Futura" size:12.0]];
                 
-                if ([CalVC dateIsNotToday:firstDayOfMonth active_date:active_date]) {
+                // this is the "TODAY" case.
+                if ([CalVC dateIsNotEqual:firstDayOfMonth active_date:active_date date_of_comparison:[[NSDate alloc] init]]) {
                     [dateString setBackgroundColor:[UIColor grayColor]];
                 }
                 else {
                     [dateString setBackgroundColor:[UIColor clearColor]];
                 }
+                if ([CalVC dateIsNotEqual:firstDayOfMonth active_date:active_date date_of_comparison:chosenDate]) {
+                    dateString.layer.borderColor = [UIColor purpleColor].CGColor;
+                    dateString.layer.cornerRadius = 2.0;
+                    dateString.layer.borderWidth = 1.0f;
+                }
+                
                 dateString.text = [NSString stringWithFormat:@"%d", active_date];
                 
                 dateString.userInteractionEnabled = NO;
@@ -459,14 +473,14 @@
     return YES;
 }
 
-+(BOOL)dateIsNotToday:(NSDate*)firstDayOfMonth active_date:(int)active_date {
-    NSDate * today = [[NSDate alloc] init];
++(BOOL)dateIsNotEqual:(NSDate*)firstDayOfMonth active_date:(int)active_date date_of_comparison:(NSDate*)date_of_comparison {
+    //NSDate * today = [[NSDate alloc] init];
     
 
     
     
-    if (([CalVC monthForDate:today] != [CalVC monthForDate:firstDayOfMonth]) ||
-        ([CalVC yearForDate:today] != [CalVC yearForDate:firstDayOfMonth])) {
+    if (([CalVC monthForDate:date_of_comparison] != [CalVC monthForDate:firstDayOfMonth]) ||
+        ([CalVC yearForDate:date_of_comparison] != [CalVC yearForDate:firstDayOfMonth])) {
         return NO;
     }
     
@@ -480,7 +494,7 @@
     
     dateComponents = nil;
     
-    if ([CalVC dayForDate:actualDate] == [CalVC dayForDate:today]) {
+    if ([CalVC dayForDate:actualDate] == [CalVC dayForDate:date_of_comparison]) {
         return YES;
     }
     

@@ -11,12 +11,12 @@
 @interface CalVC : UIViewController {
     
     NSDate * activeDate;
+    NSDate * chosenDate;
     NSMutableArray * dateMap;
-    
 }
 
 
--(id)init;
+-(id)init:(NSDate*)startingDate;
 -(void)setFrame:(CGRect)frame;
 
 -(void) drawDateGrid;
@@ -39,6 +39,6 @@
 +(NSDate*)getFirstDayOfMonth:(NSDate*)date;
 -(void)updateDateMap:(NSDate*)firstDay;
 +(int)dayForDate:(NSDate*)date;
-+(BOOL)dateIsNotToday:(NSDate*)firstDayOfMonth active_date:(int)active_date;
++(BOOL)dateIsNotEqual:(NSDate*)firstDayOfMonth active_date:(int)active_date date_of_comparison:(NSDate*)date_of_comparison;
 
 @end
