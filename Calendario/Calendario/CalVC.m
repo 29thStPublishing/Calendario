@@ -11,8 +11,6 @@
 
 #define MONTH_LABEL_HEIGHT 50
 
-#define NUM_ROWS 7
-#define DAYS_IN_WEEK 7
 
 @implementation CalVC
 
@@ -168,13 +166,26 @@
     
 }
 
+
+-(float)row_height {
+    return [self grid_height] / NUM_ROWS;
+}
+-(float)col_width {
+    return [self grid_width] / DAYS_IN_WEEK;
+}
+-(float)grid_height {
+    return (self.view.frame.size.height - MONTH_LABEL_HEIGHT);
+}
+-(float)grid_width {
+    return self.view.frame.size.width;
+}
 -(void) drawDateGrid {
-    float grid_height = (self.view.frame.size.height - MONTH_LABEL_HEIGHT);
-    float grid_width = self.view.frame.size.width;
+    float grid_height = [self grid_height];
+    float grid_width = [self grid_width];
     CGRect grid_boundary = CGRectMake(0, MONTH_LABEL_HEIGHT, grid_width, grid_height);
     
-    float row_height = grid_height / NUM_ROWS; // num rows.
-    float col_width = grid_width / DAYS_IN_WEEK; // num rows.
+    float row_height = [self row_height];
+    float col_width = [self col_width];
     
 
     UIView * gridView = [[UIView alloc] initWithFrame:grid_boundary];
@@ -203,6 +214,8 @@
     borderview = nil;
     
     
+    
+    
     for (int i = 0; i < DAYS_IN_WEEK; i++) {        
         UILabel * dayHeader = [[UILabel alloc] initWithFrame:CGRectMake(starting_x,
                                                                       starting_y,
@@ -223,32 +236,60 @@
     
     
     // draw to the next row.
-    starting_y += row_height;
+    starting_y = (row_height * 2);
     starting_x = 0;
     
-    int first_weekday = [CalVC weekdayForDate:firstDayOfMonth];
+    // adjust for zero-indexing now.
+    int first_weekday = ([CalVC weekdayForDate:firstDayOfMonth] - 1);
     int num_days_in_month = [CalVC numDaysInMonth:firstDayOfMonth];
     
     
     int active_date = 1;
     
-    for (int i = 1; i < NUM_ROWS; i++) {
-        int j = 1;
+    
+    activeDateView = [[UIView alloc] initWithFrame:CGRectMake(starting_x,
+                                                              starting_y,
+                                                              col_width,
+                                                              row_height)];
+    activeDateView.layer.borderColor = [UIColor purpleColor].CGColor;
+    activeDateView.layer.cornerRadius = 2.0;
+    activeDateView.layer.borderWidth = 1.0f;
+    [activeDateView setBackgroundColor:[UIColor clearColor]];
+    
+    
+    int active_coordinate[2];
+    for (int i = 0; i < NUM_ROWS; i++) {
         
-        while (j <= DAYS_IN_WEEK) {
+        
+        // draw to the next row. -- adjust +2 for the header rows
+        starting_y = row_height * (i + 2);
+        starting_x = 0;
+        
+        int j = 0;
+        
+        while (j < DAYS_IN_WEEK) {
             
-            if (((i == 1) && (j < first_weekday)) || (active_date > num_days_in_month)) {
+            
+             if (((i == 0) && (j < first_weekday)) || (active_date > num_days_in_month)) {
                 // do nothing
+                 day_mapping[i][j] = 0;
             }
             
             else {
-                UIButton * dayButton = [[UIButton alloc] initWithFrame:CGRectMake(starting_x,
+                
+                day_mapping[i][j] = active_date;
+                
+                
+                /*
+                 UIButton * dayButton = [[UIButton alloc] initWithFrame:CGRectMake(starting_x,
                                                                                   starting_y, 
                                                                                   col_width,
                                                                                   row_height)];
                 
-
-                UITextView * dateString = [[UITextView alloc] initWithFrame:CGRectMake(0, 5, 
+                 */
+                UITextView * dateString = [[UITextView alloc] initWithFrame:CGRectMake( //0, 5,
+                                                                                       starting_x,
+                                                                                       starting_y,
                                                                                        col_width,
                                                                                        row_height)];
                 
@@ -257,48 +298,57 @@
                 
                 // this is the "TODAY" case.
                 if ([CalVC dateIsNotEqual:firstDayOfMonth active_date:active_date date_of_comparison:[[NSDate alloc] init]]) {
-                    [dateString setBackgroundColor:[UIColor grayColor]];
+                    // [dateString setBackgroundColor:[UIColor grayColor]];
+                    
+                    active_coordinate[0] = i;
+                    active_coordinate[1] = j;
                 }
                 else {
                     [dateString setBackgroundColor:[UIColor clearColor]];
                 }
                 if ([CalVC dateIsNotEqual:firstDayOfMonth active_date:active_date date_of_comparison:chosenDate]) {
-                    dateString.layer.borderColor = [UIColor purpleColor].CGColor;
-                    dateString.layer.cornerRadius = 2.0;
-                    dateString.layer.borderWidth = 1.0f;
+
                 }
                 
                 dateString.text = [NSString stringWithFormat:@"%d", active_date];
                 
                 dateString.userInteractionEnabled = NO;
-                [dayButton addSubview:dateString];
+                //[dayButton addSubview:dateString];
                 
-                [dayButton addTarget:self action:@selector(clickDay:) forControlEvents:UIControlEventTouchUpInside];                    
+                //[dayButton addTarget:self action:@selector(clickDay:) forControlEvents:UIControlEventTouchUpInside];
 
                 
-                dayButton.tag = active_date;
+                //dayButton.tag = active_date;
 
                 
-                [self.view addSubview:dayButton];
+                //[self.view addSubview:dayButton];
+                [self.view addSubview:dateString];
+                
+                dateString = nil;
                 
                 active_date += 1;
 
 
             }
-            
+             
             starting_x += col_width;
             j++;
         }
         
-        // draw to the next row.
-        starting_y += row_height;
-        starting_x = 0;
 
-        
     }
 
-   
     
+    [self.view addSubview:activeDateView];
+    
+    // now that the view is drawn, add in a touch responder.
+    UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)];
+    tap.numberOfTapsRequired = 1;
+    tap.numberOfTouchesRequired = 1;
+    tap.cancelsTouchesInView = NO;
+    [self.view addGestureRecognizer:tap];
+    
+    [self moveSelectedDay:active_coordinate[0] col:active_coordinate[1]];
     
 }
 
@@ -332,10 +382,21 @@
                                            toDate:firstDay 
                                           options:0] atIndex:i];
     }
-    
+}
 
+-(void)moveSelectedDay:(int)row col:(int)col {
+    
+    NSLog(@"(moveSelectedDay) row = %d, col = %d\n", row, col);
+    float calculated_x = col * [self col_width];// row * [self col_width];
+    float calculated_y = (row + 2) * [self row_height]; //(col + 2) * [self row_height];
     
     
+    [activeDateView setFrame:CGRectMake(calculated_x,
+                                        calculated_y,
+                                        activeDateView.frame.size.width,
+                                        activeDateView.frame.size.height)];
+    
+    NSLog(@"Moved active day to (%.2f, %.2f)\n", calculated_x, calculated_y);
 }
 
 +(NSString*)stringForDayOfWeek:(int)dayOfWeek {
@@ -502,5 +563,30 @@
 }
 
 
-                                                 
+-(void)tapped:(UITapGestureRecognizer*)sender {
+    
+    CGPoint tapPoint = [sender locationInView:self.view];
+    
+    CGPoint tapPointInView = [self.view convertPoint:tapPoint toView:self.view];
+    
+    
+    NSLog(@"Tapped! tapPoint = (%.2f, %.2f), tapPointInView = (%.2f, %.2f)\n",
+            tapPoint.x, tapPoint.y,
+            tapPointInView.x, tapPointInView.y);
+    
+    
+    // calculate which row and column they wanted to tap in.
+    int col_width = (self.view.frame.size.width / (int) DAYS_IN_WEEK);
+    int row_height = [self row_height];
+    
+    NSLog(@"Row cutoff is %d, col cutoff is %d\n", col_width, row_height);
+    
+    int col = tapPoint.x / col_width;
+    int row = (tapPoint.y / row_height - 2); // subtract 2 to ignore the two header rows.
+    
+    NSLog(@"I think that's (%d, %d).\n", row, col);
+    NSLog(@"..and that day = %d\n", day_mapping[row][col]);
+
+    [self moveSelectedDay:row col:col];
+}
 @end

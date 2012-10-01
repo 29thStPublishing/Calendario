@@ -8,11 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CalVC : UIViewController {
+#define NUM_ROWS 7
+#define DAYS_IN_WEEK 7
+
+@interface CalVC : UIViewController <UIGestureRecognizerDelegate> {
     
     NSDate * activeDate;
     NSDate * chosenDate;
     NSMutableArray * dateMap;
+    
+    UIView * activeDateView;
+    
+    // Good old 2D array!
+    int day_mapping[NUM_ROWS][DAYS_IN_WEEK];    
 }
 
 
